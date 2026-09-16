@@ -3,3 +3,8 @@ __pycache__/
 .venv/
 venv/
 .env
+
+#output files
+output.txt
+output.md
+output.py

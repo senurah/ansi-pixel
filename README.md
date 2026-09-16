@@ -27,5 +27,16 @@ Set a custom output width with `--width` or `-w`:
 python3 main.py path/to/image.png --width 80
 ```
 
+Write copyable Python source, with ANSI escape sequences represented as
+`\\x1b` literals:
+
+```bash
+python3 main.py path/to/image.png --output py --no-print
+```
+
+This creates `output.py` containing an `art` list, like the sample in
+`render.py`. The default `txt` format contains real terminal control
+characters and is intended for terminal display, not source-code copy/paste.
+
 The conversion logic lives in `img_to_ansi.py`, while `main.py` handles the
 command-line interface.
