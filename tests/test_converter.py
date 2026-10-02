@@ -3,17 +3,24 @@
 from __future__ import annotations
 
 import io
+import os
+import shutil
+import sys
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
 from PIL import Image
 
 from ansi_pixel.converter import (
     ResamplingFilter,
+    get_terminal_width,
     image_to_ansi,
+    is_url,
     parse_hex_color,
     parse_resampling_filter,
 )
+from ansi_pixel.optimizer import strip_ansi
 
 
 def test_white_pixel_preservation() -> None:
@@ -132,7 +139,69 @@ def test_image_source_types(tmp_path: Path) -> None:
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     buf.seek(0)
-    assert len(image_to_ansi(buf, target_width=4)) > 0
+    # 5. Raw bytes
+    assert len(image_to_ansi(buf.getvalue(), target_width=4)) > 0
+
+
+def test_converter_auto_terminal_width(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Verify that image_to_ansi auto-detects width using shutil.get_terminal_size()."""
+    monkeypatch.setattr(
+        shutil, "get_terminal_size", lambda fallback=(80, 24): os.terminal_size((55, 24))
+    )
+    assert get_terminal_width() == 55
+
+    img = Image.new("RGBA", (100, 100), (255, 100, 50, 255))
+    lines = image_to_ansi(img)
+    plain_first = strip_ansi(lines[0])
+    assert len(plain_first) == 55
+
+
+def test_converter_url_loading(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Verify loading and converting an image via a URL source."""
+    assert is_url("https://example.com/logo.png") is True
+    assert is_url("http://example.com/art.jpg") is True
+    assert is_url("/path/to/local/file.png") is False
+
+    img = Image.new("RGBA", (8, 8), (0, 200, 100, 255))
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+
+    mock_resp = MagicMock()
+    mock_resp.read.return_value = buf.getvalue()
+    mock_resp.__enter__.return_value = mock_resp
+    mock_resp.__exit__.return_value = None
+
+    monkeypatch.setattr(
+        "ansi_pixel.converter.urllib.request.urlopen",
+        lambda req, timeout=15.0: mock_resp,
+    )
+
+    lines = image_to_ansi("https://example.com/logo.png", target_width=6)
+    assert len(lines) > 0
+
+
+def test_converter_stdin_loading(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Verify loading from stdin when image='-'."""
+    img = Image.new("RGBA", (8, 8), (100, 0, 200, 255))
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+
+    fake_stdin = MagicMock()
+    fake_stdin.buffer = io.BytesIO(buf.getvalue())
+    monkeypatch.setattr(sys, "stdin", fake_stdin)
+
+    lines = image_to_ansi("-", target_width=6)
+    assert len(lines) > 0
+
+
+def test_converter_color_false() -> None:
+    """Verify that color=False strips all ANSI color sequences."""
+    img = Image.new("RGBA", (8, 8), (255, 128, 0, 255))
+    lines_colored = image_to_ansi(img, target_width=6, color=True)
+    lines_mono = image_to_ansi(img, target_width=6, color=False)
+
+    assert "\033[" in "".join(lines_colored)
+    assert "\033[" not in "".join(lines_mono)
 
 
 def test_edge_cases() -> None:
@@ -157,3 +226,4 @@ def test_edge_cases() -> None:
     # Invalid target width (< 1)
     with pytest.raises(ValueError, match="target_width must be at least 1"):
         image_to_ansi(img_1x1, target_width=0)
+

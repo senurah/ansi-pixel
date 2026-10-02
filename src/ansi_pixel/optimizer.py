@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Sequence
 
 # ANSI escape sequence constants
@@ -134,3 +135,20 @@ def optimize_row_cells(cells: Sequence[tuple[RGBColor | None, RGBColor | None]])
         The optimized ANSI string for the row.
     """
     return AnsiOptimizer().optimize_row(cells)
+
+
+# Regex matching all ANSI escape sequences (CSI sequences ending in letter)
+ANSI_ESCAPE_PATTERN: re.Pattern[str] = re.compile(r"\x1b\[[0-9;]*[a-zA-Z]")
+
+
+def strip_ansi(text: str) -> str:
+    """Remove all ANSI escape sequences from a string.
+
+    Args:
+        text: Text containing ANSI escape sequences.
+
+    Returns:
+        String with all ANSI escape codes stripped.
+    """
+    return ANSI_ESCAPE_PATTERN.sub("", text)
+

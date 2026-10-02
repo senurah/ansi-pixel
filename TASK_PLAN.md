@@ -8,7 +8,7 @@ This document outlines the step-by-step roadmap to transform `ansi-pixel` into a
 
 - [x] **Phase 1**: Modern Packaging & Project Structure
 - [x] **Phase 2**: Core Engine Refactoring & ANSI Optimization
-- [ ] **Phase 3**: CLI & Terminal Experience Modernization
+- [x] **Phase 3**: CLI & Terminal Experience Modernization
 - [ ] **Phase 4**: Multi-Format Exporters & Public Library API
 - [ ] **Phase 5**: Test Suite, Documentation & Linting
 - [ ] **Phase 6**: CI/CD Workflows, PyPI Release & Binaries
@@ -48,15 +48,15 @@ This document outlines the step-by-step roadmap to transform `ansi-pixel` into a
 
 ### Phase 3: CLI & Terminal Experience Modernization
 
-- [ ] **3.1** Implement automatic terminal width detection using `shutil.get_terminal_size()`.
-- [ ] **3.2** Refactor CLI argument parsing:
+- [x] **3.1** Implement automatic terminal width detection using `shutil.get_terminal_size()`.
+- [x] **3.2** Refactor CLI argument parsing:
   - Output to `stdout` by default (UNIX composability).
   - Add `-o, --output <FILE>` for saving output to a file.
   - Add `-f, --format <FORMAT>` (choices: `ansi`, `md`, `py`, `js`, `html`).
   - Add `-w, --width <INT>` with automatic terminal fitting when omitted.
-- [ ] **3.3** Add support for reading from standard input: `cat photo.png | ansi-pixel -`.
-- [ ] **3.4** Add support for direct image URLs: `ansi-pixel https://example.com/logo.png`.
-- [ ] **3.5** Implement `NO_COLOR` standard and non-TTY pipe detection.
+- [x] **3.3** Add support for reading from standard input: `cat photo.png | ansi-pixel -`.
+- [x] **3.4** Add support for direct image URLs: `ansi-pixel https://example.com/logo.png`.
+- [x] **3.5** Implement `NO_COLOR` standard and non-TTY pipe detection.
 
 ---
 

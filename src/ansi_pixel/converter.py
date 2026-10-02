@@ -2,16 +2,82 @@
 
 from __future__ import annotations
 
+import io
 import os
+import shutil
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
 from enum import Enum
 from typing import BinaryIO, Union, cast
 
 from PIL import Image
 
-from ansi_pixel.optimizer import AnsiOptimizer, RGBColor
+from ansi_pixel.optimizer import AnsiOptimizer, RGBColor, strip_ansi
 
 # Type aliases for public API inputs
-ImageSource = Union[str, "os.PathLike[str]", BinaryIO, Image.Image]
+ImageSource = Union[str, "os.PathLike[str]", BinaryIO, Image.Image, bytes]
+
+
+def get_terminal_width(fallback: int = 80) -> int:
+    """Auto-detect current terminal width using shutil.get_terminal_size().
+
+    Args:
+        fallback: Fallback column count if terminal width cannot be determined.
+
+    Returns:
+        Terminal width in character columns (at least 1).
+    """
+    try:
+        cols = shutil.get_terminal_size(fallback=(fallback, 24)).columns
+        return max(1, cols)
+    except Exception:
+        return max(1, fallback)
+
+
+def is_url(source: str) -> bool:
+    """Determine whether a string represents an HTTP or HTTPS URL.
+
+    Args:
+        source: Path or URL candidate string.
+
+    Returns:
+        True if source is an HTTP/HTTPS URL, False otherwise.
+    """
+    try:
+        parsed = urllib.parse.urlparse(source)
+        return parsed.scheme in ("http", "https") and bool(parsed.netloc)
+    except Exception:
+        return False
+
+
+def fetch_url(url: str, timeout: float = 15.0) -> bytes:
+    """Fetch binary image content from an HTTP or HTTPS URL.
+
+    Args:
+        url: Direct image URL to download.
+        timeout: Network timeout in seconds (default: 15.0).
+
+    Returns:
+        Raw downloaded image bytes.
+
+    Raises:
+        urllib.error.HTTPError: If server responds with HTTP error code.
+        urllib.error.URLError: If network error or host unreachable.
+        TimeoutError: If the request exceeds timeout seconds.
+    """
+    req = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "ansi-pixel (https://github.com/senurah/ansi-pixel)",
+            "Accept": "image/*,*/*;q=0.8",
+        },
+    )
+    with urllib.request.urlopen(req, timeout=timeout) as response:
+        return cast(bytes, response.read())
+
+
 
 
 class ResamplingFilter(str, Enum):
@@ -171,32 +237,51 @@ def _find_content_bbox(
 
 def image_to_ansi(
     image: ImageSource,
-    target_width: int = 40,
+    target_width: int | None = None,
     filter: FilterInput = ResamplingFilter.NEAREST,
     trim_bg: bool = False,
     chroma_key: str | RGBColor | None = None,
     chroma_tolerance: int = 15,
     alpha_threshold: int = 128,
+    color: bool = True,
 ) -> list[str]:
     """Convert an image into an optimized list of true-color ANSI art strings.
 
     Args:
-        image: Path to image file, open binary file-like object, or PIL Image.Image.
-        target_width: Desired output width in terminal characters (default: 40).
+        image: Path to image file, URL, '-' for stdin, open binary file-like object,
+            raw bytes, or PIL Image.Image.
+        target_width: Desired output width in terminal characters (default: auto-detected).
         filter: Resampling filter ('nearest', 'lanczos', 'bilinear').
         trim_bg: If True, treat near-white backgrounds as transparent and crop borders.
         chroma_key: Hex color string (e.g. '#FFFFFF') or RGB tuple to strip as transparent.
         chroma_tolerance: Matching tolerance for chroma key (default: 15).
         alpha_threshold: Alpha cutoff for transparency (0-255, default: 128).
+        color: If False, strip ANSI color sequences from output (default: True).
 
     Returns:
         A list of strings, each representing one terminal line with optimized ANSI sequences.
     """
+    if target_width is None:
+        target_width = get_terminal_width()
+
     if target_width < 1:
         raise ValueError("target_width must be at least 1.")
 
     if isinstance(image, Image.Image):
         img = image.convert("RGBA")
+    elif isinstance(image, str) and image == "-":
+        data = sys.stdin.buffer.read()
+        if not data:
+            raise ValueError("Standard input is empty.")
+        with Image.open(io.BytesIO(data)) as opened:
+            img = opened.convert("RGBA")
+    elif isinstance(image, str) and is_url(image):
+        data = fetch_url(image)
+        with Image.open(io.BytesIO(data)) as opened:
+            img = opened.convert("RGBA")
+    elif isinstance(image, bytes):
+        with Image.open(io.BytesIO(image)) as opened:
+            img = opened.convert("RGBA")
     else:
         with Image.open(image) as opened:
             img = opened.convert("RGBA")
@@ -279,4 +364,8 @@ def image_to_ansi(
 
         lines.append(optimizer.optimize_row(row_cells))
 
+    if not color:
+        lines = [strip_ansi(line) for line in lines]
+
     return lines
+
