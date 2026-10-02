@@ -9,7 +9,7 @@ This document outlines the step-by-step roadmap to transform `ansi-pixel` into a
 - [x] **Phase 1**: Modern Packaging & Project Structure
 - [x] **Phase 2**: Core Engine Refactoring & ANSI Optimization
 - [x] **Phase 3**: CLI & Terminal Experience Modernization
-- [ ] **Phase 4**: Multi-Format Exporters & Public Library API
+- [x] **Phase 4**: Multi-Format Exporters & Public Library API
 - [ ] **Phase 5**: Test Suite, Documentation & Linting
 - [ ] **Phase 6**: CI/CD Workflows, PyPI Release & Binaries
 
@@ -62,15 +62,15 @@ This document outlines the step-by-step roadmap to transform `ansi-pixel` into a
 
 ### Phase 4: Multi-Format Exporters & Public Library API
 
-- [ ] **4.1** Implement dedicated exporter modules under `src/ansi_pixel/exporters/`:
+- [x] **4.1** Implement dedicated exporter modules under `src/ansi_pixel/exporters/`:
   - `ansi.py`: Raw ANSI terminal string.
   - `markdown.py`: GitHub-compatible ``ansi` code block.
   - `code.py`: Copy-pasteable Python snippet and JavaScript template string.
   - `html.py`: Styled `<pre>` and `<span>` markup.
-- [ ] **4.2** Define public library interface in `src/ansi_pixel/__init__.py`:
+- [x] **4.2** Define public library interface in `src/ansi_pixel/__init__.py`:
   - `render_image(source, width=..., format=...) -> str`
   - `image_to_ansi(source, width=...) -> list[str]`
-- [ ] **4.3** Verify that external Python scripts can import and use `ansi_pixel` cleanly.
+- [x] **4.3** Verify that external Python scripts can import and use `ansi_pixel` cleanly.
 
 ---
 

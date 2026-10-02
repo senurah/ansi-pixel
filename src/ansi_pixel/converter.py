@@ -238,6 +238,8 @@ def _find_content_bbox(
 def image_to_ansi(
     image: ImageSource,
     target_width: int | None = None,
+    *,
+    width: int | None = None,
     filter: FilterInput = ResamplingFilter.NEAREST,
     trim_bg: bool = False,
     chroma_key: str | RGBColor | None = None,
@@ -251,6 +253,7 @@ def image_to_ansi(
         image: Path to image file, URL, '-' for stdin, open binary file-like object,
             raw bytes, or PIL Image.Image.
         target_width: Desired output width in terminal characters (default: auto-detected).
+        width: Alias for target_width.
         filter: Resampling filter ('nearest', 'lanczos', 'bilinear').
         trim_bg: If True, treat near-white backgrounds as transparent and crop borders.
         chroma_key: Hex color string (e.g. '#FFFFFF') or RGB tuple to strip as transparent.
@@ -261,11 +264,15 @@ def image_to_ansi(
     Returns:
         A list of strings, each representing one terminal line with optimized ANSI sequences.
     """
-    if target_width is None:
-        target_width = get_terminal_width()
+    resolved_width = width if width is not None else target_width
+    if resolved_width is None:
+        resolved_width = get_terminal_width()
 
-    if target_width < 1:
+    if resolved_width < 1:
         raise ValueError("target_width must be at least 1.")
+
+    target_width = resolved_width
+
 
     if isinstance(image, Image.Image):
         img = image.convert("RGBA")

@@ -89,21 +89,58 @@ def _line_to_html(line: str) -> str:
     return "".join(parts)
 
 
-def export_html(lines: Sequence[str]) -> str:
+def export_html(
+    lines: Sequence[str],
+    standalone: bool = False,
+    title: str = "ANSI Art",
+) -> str:
     """Export lines as styled HTML <pre> block with <span> tags for true-color ANSI styles.
 
     Args:
         lines: Rendered ANSI art lines.
+        standalone: If True, wrap the pre block in a full HTML5 document template.
+        title: Document title when standalone=True (default: 'ANSI Art').
 
     Returns:
-        Complete HTML snippet wrapped in a <pre> element.
+        HTML snippet or full HTML document string.
     """
     html_lines = [_line_to_html(line) for line in lines]
     body = "\n".join(html_lines)
-    return (
+    pre_block = (
         '<pre style="background-color: #000000; color: #ffffff; '
         'font-family: monospace; line-height: 1; letter-spacing: 0; '
         'display: inline-block; padding: 8px;">\n'
         f"{body}\n"
-        "</pre>\n"
+        "</pre>"
     )
+
+    if not standalone:
+        return f"{pre_block}\n"
+
+    escaped_title = html.escape(title)
+    return (
+        "<!DOCTYPE html>\n"
+        '<html lang="en">\n'
+        "<head>\n"
+        '  <meta charset="utf-8">\n'
+        f"  <title>{escaped_title}</title>\n"
+        "  <style>\n"
+        "    body {\n"
+        "      background-color: #121212;\n"
+        "      color: #ffffff;\n"
+        "      margin: 0;\n"
+        "      padding: 24px;\n"
+        "      display: flex;\n"
+        "      justify-content: center;\n"
+        "      align-items: center;\n"
+        "      min-height: 100vh;\n"
+        "      box-sizing: border-box;\n"
+        "    }\n"
+        "  </style>\n"
+        "</head>\n"
+        "<body>\n"
+        f"{pre_block}\n"
+        "</body>\n"
+        "</html>\n"
+    )
+
