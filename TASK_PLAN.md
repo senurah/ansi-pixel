@@ -7,7 +7,7 @@ This document outlines the step-by-step roadmap to transform `ansi-pixel` into a
 ## Progress Overview
 
 - [x] **Phase 1**: Modern Packaging & Project Structure
-- [ ] **Phase 2**: Core Engine Refactoring & ANSI Optimization
+- [x] **Phase 2**: Core Engine Refactoring & ANSI Optimization
 - [ ] **Phase 3**: CLI & Terminal Experience Modernization
 - [ ] **Phase 4**: Multi-Format Exporters & Public Library API
 - [ ] **Phase 5**: Test Suite, Documentation & Linting
@@ -33,16 +33,16 @@ This document outlines the step-by-step roadmap to transform `ansi-pixel` into a
 
 ### Phase 2: Core Engine Refactoring & ANSI Optimization
 
-- [ ] **2.1** Remove dead code (unused `bg` image allocation in `img_to_ansi.py`).
-- [ ] **2.2** Fix the white-pixel erasure bug:
+- [x] **2.1** Remove dead code (unused `bg` image allocation in `img_to_ansi.py`).
+- [x] **2.2** Fix the white-pixel erasure bug:
   - Default transparency strictly to alpha channel ($A < 128$).
   - Add optional `--trim-bg` or `--chroma-key` flags for intentional white/solid background stripping.
-- [ ] **2.3** Refactor pixel access from `img.getpixel((x, y))` to fast direct buffer access via `img.load()`.
-- [ ] **2.4** Implement ANSI sequence compression optimizer (`src/ansi_pixel/optimizer.py`):
+- [x] **2.3** Refactor pixel access from `img.getpixel((x, y))` to fast direct buffer access via `img.load()`.
+- [x] **2.4** Implement ANSI sequence compression optimizer (`src/ansi_pixel/optimizer.py`):
   - Track active foreground and background color escape states.
   - Suppress redundant escape codes when consecutive blocks share the same color.
   - Reset formatting only at end-of-line or when entering a transparent block.
-- [ ] **2.5** Add resampling filter support: `--filter [nearest|lanczos|bilinear]`.
+- [x] **2.5** Add resampling filter support: `--filter [nearest|lanczos|bilinear]`.
 
 ---
 
