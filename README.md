@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" alt="ansi-pixel logo" width="320">
+  <img src="https://raw.githubusercontent.com/senurah/ansi-pixel/main/assets/logo.png" alt="ansi-pixel logo" width="320">
 </p>
 
 <h1 align="center">ansi-pixel</h1>
@@ -92,7 +92,7 @@ curl -s https://example.com/art.png | ansi-pixel -w 50
 ### Load from Image URLs
 Fetch and render remote images directly:
 ```bash
-ansi-pixel https://raw.githubusercontent.com/senurah/ansi-pixel/main/logo.png -w 40
+ansi-pixel "https://raw.githubusercontent.com/senurah/ansi-pixel/main/assets/logo.png" -w 40
 ```
 
 ### Export to Files

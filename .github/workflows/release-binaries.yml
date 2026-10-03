@@ -31,10 +31,6 @@ jobs:
             os: macos-latest
             binary_name: ansi-pixel-darwin-arm64
             output_file: dist/ansi-pixel-darwin-arm64
-          - target: macOS Intel (x86_64)
-            os: macos-13
-            binary_name: ansi-pixel-darwin-x86_64
-            output_file: dist/ansi-pixel-darwin-x86_64
           - target: Windows x86_64
             os: windows-latest
             binary_name: ansi-pixel-windows-x86_64
