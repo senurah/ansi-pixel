@@ -109,3 +109,41 @@ def test_optimize_row_cells_helper() -> None:
     res1 = optimize_row_cells(cells)
     res2 = AnsiOptimizer().optimize_row(cells)
     assert res1 == res2
+
+
+def test_consecutive_color_transitions() -> None:
+    """Verify state transitions where only foreground or only background changes."""
+    optimizer = AnsiOptimizer()
+
+    # Initial cell: FG=(255, 0, 0), BG=(0, 0, 255)
+    c1 = optimizer.draw_cell((255, 0, 0), (0, 0, 255))
+    assert "\033[38;2;255;0;0m" in c1
+    assert "\033[48;2;0;0;255m" in c1
+
+    # Second cell: same FG, different BG -> only BG should be emitted
+    c2 = optimizer.draw_cell((255, 0, 0), (0, 255, 0))
+    assert "\033[38;2;255;0;0m" not in c2
+    assert "\033[48;2;0;255;0m" in c2
+
+    # Third cell: different FG, same BG -> only FG should be emitted
+    c3 = optimizer.draw_cell((0, 0, 255), (0, 255, 0))
+    assert "\033[38;2;0;0;255m" in c3
+    assert "\033[48;2;0;255;0m" not in c3
+
+
+def test_strip_ansi_comprehensive() -> None:
+    """Verify strip_ansi removes all ANSI SGR and CSI escape sequences."""
+    from ansi_pixel.optimizer import strip_ansi
+
+    sample = (
+        "\033[38;2;255;0;0mRed Text\033[0m "
+        "\033[48;2;0;255;0mGreen BG\033[0m "
+        "\033[1;34mBold Blue\033[0m"
+    )
+    clean = strip_ansi(sample)
+    assert clean == "Red Text Green BG Bold Blue"
+    assert "\033[" not in clean
+
+    # Plain text remains unchanged
+    assert strip_ansi("Plain string") == "Plain string"
+    assert strip_ansi("") == ""

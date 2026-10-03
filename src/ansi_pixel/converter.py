@@ -78,8 +78,6 @@ def fetch_url(url: str, timeout: float = 15.0) -> bytes:
         return cast(bytes, response.read())
 
 
-
-
 class ResamplingFilter(str, Enum):
     """Supported image resampling filters."""
 
@@ -273,7 +271,6 @@ def image_to_ansi(
 
     target_width = resolved_width
 
-
     if isinstance(image, Image.Image):
         img = image.convert("RGBA")
     elif isinstance(image, str) and image == "-":
@@ -375,4 +372,3 @@ def image_to_ansi(
         lines = [strip_ansi(line) for line in lines]
 
     return lines
-

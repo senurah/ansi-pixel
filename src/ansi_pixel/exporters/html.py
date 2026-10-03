@@ -25,7 +25,7 @@ def _line_to_html(line: str) -> str:
 
     last_end = 0
     for match in _ANSI_SGR_REGEX.finditer(line):
-        text_before = line[last_end:match.start()]
+        text_before = line[last_end : match.start()]
         if text_before:
             escaped_text = html.escape(text_before)
             if current_fg or current_bg:
@@ -108,7 +108,7 @@ def export_html(
     body = "\n".join(html_lines)
     pre_block = (
         '<pre style="background-color: #000000; color: #ffffff; '
-        'font-family: monospace; line-height: 1; letter-spacing: 0; '
+        "font-family: monospace; line-height: 1; letter-spacing: 0; "
         'display: inline-block; padding: 8px;">\n'
         f"{body}\n"
         "</pre>"
@@ -143,4 +143,3 @@ def export_html(
         "</body>\n"
         "</html>\n"
     )
-

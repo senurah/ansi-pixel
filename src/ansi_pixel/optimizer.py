@@ -151,4 +151,3 @@ def strip_ansi(text: str) -> str:
         String with all ANSI escape codes stripped.
     """
     return ANSI_ESCAPE_PATTERN.sub("", text)
-

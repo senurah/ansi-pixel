@@ -177,7 +177,6 @@ def test_cli_empty_stdin(monkeypatch: pytest.MonkeyPatch) -> None:
     assert code == 1
 
 
-
 def test_cli_url_loading(monkeypatch: pytest.MonkeyPatch) -> None:
     """Verify loading and rendering an image directly from a URL."""
     img = Image.new("RGBA", (12, 12), (255, 255, 0, 255))
@@ -206,6 +205,7 @@ def test_cli_url_loading(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_cli_url_network_error(monkeypatch: pytest.MonkeyPatch) -> None:
     """Verify that a network error when fetching a URL produces exit code 1."""
+
     def fail_urlopen(*args: object, **kwargs: object) -> MagicMock:
         raise urllib.error.URLError("Connection refused")
 
@@ -217,9 +217,15 @@ def test_cli_url_network_error(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_cli_url_http_error(monkeypatch: pytest.MonkeyPatch) -> None:
     """Verify that an HTTP 404 error produces exit code 1."""
+    from email.message import Message
+
     def fail_http(*args: object, **kwargs: object) -> MagicMock:
         raise urllib.error.HTTPError(
-            "https://example.com/notfound.png", 404, "Not Found", {}, None  # type: ignore[arg-type]
+            "https://example.com/notfound.png",
+            404,
+            "Not Found",
+            Message(),
+            None,
         )
 
     monkeypatch.setattr("ansi_pixel.converter.urllib.request.urlopen", fail_http)

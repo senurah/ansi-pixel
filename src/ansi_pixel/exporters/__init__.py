@@ -85,9 +85,7 @@ def export_format(
         standalone = bool(kwargs.get("standalone", False))
         title = str(kwargs.get("title", "ANSI Art"))
         return export_html(lines, standalone=standalone, title=title)
-    raise ValueError(
-        f"Unsupported format '{output_format}'. Valid choices: ansi, md, py, js, html"
-    )
+    raise ValueError(f"Unsupported format '{output_format}'. Valid choices: ansi, md, py, js, html")
 
 
 __all__ = [

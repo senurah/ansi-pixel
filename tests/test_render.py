@@ -47,7 +47,6 @@ def test_render_image_default_ansi() -> None:
     assert result.endswith("\n")
 
 
-
 @pytest.mark.parametrize(
     ("fmt", "prefix"),
     [
@@ -204,4 +203,3 @@ print("OK")
     err_msg = f"External script failed:\nSTDOUT: {result.stdout}\nSTDERR: {result.stderr}"
     assert result.returncode == 0, err_msg
     assert "OK" in result.stdout
-

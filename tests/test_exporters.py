@@ -92,7 +92,7 @@ def test_export_html_standalone() -> None:
     """Verify standalone HTML document generation with HTML5 doctype and title."""
     line = "\033[38;2;0;255;0m▀\033[0m"
     result = export_html([line], standalone=True, title="Banner Preview")
-    assert result.startswith("<!DOCTYPE html>\n<html lang=\"en\">\n")
+    assert result.startswith('<!DOCTYPE html>\n<html lang="en">\n')
     assert "<title>Banner Preview</title>" in result
     assert "</pre>\n</body>\n</html>\n" in result
 

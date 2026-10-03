@@ -33,7 +33,6 @@ def format_lines(lines: list[str], output_format: OutputFormat | str) -> str:
     return export_format(lines, output_format)
 
 
-
 def write_output(
     lines: list[str],
     output_format: OutputFormat | str = OutputFormat.ANSI,
@@ -79,13 +78,8 @@ def is_color_enabled(color_mode: str = "auto", stream: TextIO | None = None) -> 
     if os.environ.get("NO_COLOR", "") != "":
         return False
 
-    # 2. Non-TTY pipe detection: if output stream is not an interactive terminal, disable color
     target_stream = stream if stream is not None else sys.stdout
-    is_tty = getattr(target_stream, "isatty", lambda: False)()
-    if not is_tty:
-        return False
-
-    return True
+    return bool(getattr(target_stream, "isatty", lambda: False)())
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -286,9 +280,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             return 1
 
     # Output to stdout by default (when -o is omitted) or when --print is explicitly enabled
-    should_print = (
-        args.print_output if args.print_output is not None else (args.output is None)
-    )
+    should_print = args.print_output if args.print_output is not None else (args.output is None)
     if should_print:
         sys.stdout.write(formatted_output)
 

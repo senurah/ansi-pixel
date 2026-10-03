@@ -65,10 +65,12 @@ packages = ["src/ansi_pixel"]
 [tool.pytest.ini_options]
 pythonpath = ["src", "."]
 testpaths = ["tests"]
+addopts = "-ra -q --strict-markers"
 
 [tool.ruff]
 line-length = 100
 target-version = "py39"
+src = ["src", "tests"]
 
 [tool.ruff.lint]
 select = [
@@ -78,13 +80,26 @@ select = [
     "I",
     "B",
     "UP",
+    "C4",
+    "SIM",
 ]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
 
 [tool.mypy]
 python_version = "3.10"
 strict = true
 mypy_path = "src"
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
 
 [[tool.mypy.overrides]]
 module = "PIL.*"
 ignore_missing_imports = true
+

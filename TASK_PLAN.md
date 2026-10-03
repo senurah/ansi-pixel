@@ -10,7 +10,7 @@ This document outlines the step-by-step roadmap to transform `ansi-pixel` into a
 - [x] **Phase 2**: Core Engine Refactoring & ANSI Optimization
 - [x] **Phase 3**: CLI & Terminal Experience Modernization
 - [x] **Phase 4**: Multi-Format Exporters & Public Library API
-- [ ] **Phase 5**: Test Suite, Documentation & Linting
+- [x] **Phase 5**: Test Suite, Documentation & Linting
 - [ ] **Phase 6**: CI/CD Workflows, PyPI Release & Binaries
 
 ---
@@ -76,19 +76,20 @@ This document outlines the step-by-step roadmap to transform `ansi-pixel` into a
 
 ### Phase 5: Test Suite, Documentation & Linting
 
-- [ ] **5.1** Configure `pytest` with comprehensive test cases in `tests/`:
+- [x] **5.1** Configure `pytest` with comprehensive test cases in `tests/`:
   - `test_converter.py`: Half-block generation, aspect ratio math, alpha handling.
   - `test_optimizer.py`: Escape sequence compression ratio and formatting validation.
   - `test_exporters.py`: Verify validity of Markdown, Python, JS, and HTML outputs.
   - `test_cli.py`: Test CLI flags, help text, stdout redirection, and error exit codes.
-- [ ] **5.2** Set up code quality tools:
+- [x] **5.2** Set up code quality tools:
   - Configure `ruff` in `pyproject.toml` for linting and formatting.
   - Configure `mypy` for strict type checking.
-- [ ] **5.3** Overhaul `README.md`:
+- [x] **5.3** Overhaul `README.md`:
   - Add PyPI install instructions (`pip install ansi-pixel`, `pipx`, `uv`).
   - Document CLI usage with options table and pipe examples.
   - Add Python library usage quickstart.
   - Showcase updated screenshots and feature highlights.
+
 
 ---
 

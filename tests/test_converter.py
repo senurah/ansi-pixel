@@ -204,6 +204,37 @@ def test_converter_color_false() -> None:
     assert "\033[" not in "".join(lines_mono)
 
 
+def test_aspect_ratio_and_half_block_math() -> None:
+    """Verify aspect ratio calculations and half-block row pairing.
+
+    Each terminal line renders 2 vertical subpixels (top and bottom half blocks).
+    Therefore, the number of output lines should always be target_height // 2.
+    """
+    # 1. Image with aspect ratio 0.5 (100 wide x 50 high)
+    # At width 20, target_height is 10 (even), so output lines must be 5
+    img_wide = Image.new("RGBA", (100, 50), (255, 0, 0, 255))
+    lines_wide = image_to_ansi(img_wide, target_width=20)
+    assert len(lines_wide) == 5
+
+    # 2. Image with aspect ratio 2.0 (50 wide x 100 high)
+    # At width 20, target_height is 40, so output lines must be 20
+    img_tall = Image.new("RGBA", (50, 100), (0, 255, 0, 255))
+    lines_tall = image_to_ansi(img_tall, target_width=20)
+    assert len(lines_tall) == 20
+
+    # 3. Odd target height must be adjusted up to even
+    # 100 wide x 75 high -> aspect 0.75. At width 10: 10 * 0.75 = 7.5 -> int 7 -> adjusted to 8.
+    # Output lines must be 8 // 2 = 4 lines.
+    img_odd_aspect = Image.new("RGBA", (100, 75), (0, 0, 255, 255))
+    lines_odd_aspect = image_to_ansi(img_odd_aspect, target_width=10)
+    assert len(lines_odd_aspect) == 4
+
+    # 4. Very small image height must clamp to at least 2 pixels (1 terminal line)
+    img_flat = Image.new("RGBA", (100, 1), (255, 255, 0, 255))
+    lines_flat = image_to_ansi(img_flat, target_width=10)
+    assert len(lines_flat) == 1
+
+
 def test_edge_cases() -> None:
     """Verify edge cases such as 1x1 image, odd dimensions, and invalid width."""
     # 1x1 pixel image
@@ -226,4 +257,3 @@ def test_edge_cases() -> None:
     # Invalid target width (< 1)
     with pytest.raises(ValueError, match="target_width must be at least 1"):
         image_to_ansi(img_1x1, target_width=0)
-
