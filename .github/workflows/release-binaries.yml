@@ -1,0 +1,114 @@
+name: Release Standalone Binaries
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Release tag (optional, e.g. v0.2.0)"
+        required: false
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-binaries:
+    name: Build (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: Linux x86_64
+            os: ubuntu-latest
+            binary_name: ansi-pixel-linux-x86_64
+            output_file: dist/ansi-pixel-linux-x86_64
+          - target: macOS Apple Silicon (ARM64)
+            os: macos-latest
+            binary_name: ansi-pixel-darwin-arm64
+            output_file: dist/ansi-pixel-darwin-arm64
+          - target: macOS Intel (x86_64)
+            os: macos-13
+            binary_name: ansi-pixel-darwin-x86_64
+            output_file: dist/ansi-pixel-darwin-x86_64
+          - target: Windows x86_64
+            os: windows-latest
+            binary_name: ansi-pixel-windows-x86_64
+            output_file: dist/ansi-pixel-windows-x86_64.exe
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies and PyInstaller
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyinstaller .
+
+      - name: Build standalone executable with PyInstaller
+        run: pyinstaller --onefile --clean --name ${{ matrix.binary_name }} main.py
+
+      - name: Smoke test executable (Linux / macOS)
+        if: runner.os != 'Windows'
+        run: |
+          ./${{ matrix.output_file }} --help
+          ./${{ matrix.output_file }} --version
+
+      - name: Smoke test executable (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          .\${{ matrix.output_file }} --help
+          .\${{ matrix.output_file }} --version
+
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.binary_name }}
+          path: ${{ matrix.output_file }}
+          retention-days: 7
+
+  release:
+    name: Create GitHub Release & Upload Assets
+    needs: build-binaries
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download all binary artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          merge-multiple: true
+
+      - name: Generate SHA256 checksums
+        run: |
+          cd release-assets
+          sha256sum ansi-pixel-* > checksums.txt
+          echo "Generated checksums:"
+          cat checksums.txt
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v') || (github.event.inputs.tag_name != '')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag_name || github.ref_name }}
+          files: |
+            release-assets/ansi-pixel-*
+            release-assets/checksums.txt
+          generate_release_notes: true
+          draft: false
+          prerelease: false

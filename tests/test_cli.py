@@ -394,3 +394,22 @@ def test_cli_execution_with_test_image(tmp_path: Path) -> None:
         check=False,
     )
     assert result.returncode == 0
+
+
+def test_cli_version_flag(capsys: pytest.CaptureFixture[str]) -> None:
+    """Verify that -V and --version output the program name and version string."""
+    from ansi_pixel import __version__
+
+    code = main(["--version"])
+    assert code == 0
+    captured = capsys.readouterr()
+    assert (
+        f"ansi-pixel {__version__}" in captured.out or f"ansi-pixel {__version__}" in captured.err
+    )
+
+    code = main(["-V"])
+    assert code == 0
+    captured = capsys.readouterr()
+    assert (
+        f"ansi-pixel {__version__}" in captured.out or f"ansi-pixel {__version__}" in captured.err
+    )

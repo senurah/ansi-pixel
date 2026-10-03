@@ -95,7 +95,7 @@ This document outlines the step-by-step roadmap to transform `ansi-pixel` into a
 
 ### Phase 6: CI/CD Workflows, PyPI Release & Binaries
 
-- [ ] **6.1** Create `.github/workflows/ci.yml` running tests and linters across Python 3.9–3.14 on Linux, macOS, and Windows.
-- [ ] **6.2** Create `.github/workflows/publish.yml` using PyPI Trusted Publishing (OIDC) for automated release upon pushing git tags (`v*.*.*`).
-- [ ] **6.3** Create `.github/workflows/release-binaries.yml` generating standalone executables with PyInstaller for GitHub Releases.
-- [ ] **6.4** Create Homebrew formula template in documentation for macOS/Linux distribution.
+- [x] **6.1** Create `.github/workflows/ci.yml` running tests and linters across Python 3.9–3.14 on Linux, macOS, and Windows.
+- [x] **6.2** Create `.github/workflows/publish.yml` using PyPI Trusted Publishing (OIDC) for automated release upon pushing git tags (`v*.*.*`).
+- [x] **6.3** Create `.github/workflows/release-binaries.yml` generating standalone executables with PyInstaller for GitHub Releases.
+- [x] **6.4** Create Homebrew formula template in documentation for macOS/Linux distribution.

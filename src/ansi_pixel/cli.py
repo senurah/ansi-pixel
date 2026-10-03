@@ -12,6 +12,7 @@ from typing import TextIO
 
 from PIL import UnidentifiedImageError
 
+from ansi_pixel import __version__
 from ansi_pixel.converter import ResamplingFilter, get_terminal_width, image_to_ansi
 from ansi_pixel.exporters import (
     OutputFormat,
@@ -94,6 +95,13 @@ def build_parser() -> argparse.ArgumentParser:
             "Convert an image into true-color ANSI art for terminal banners, "
             "SSH previews, and Markdown."
         ),
+    )
+    parser.add_argument(
+        "-V",
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
+        help="Show program's version number and exit",
     )
     parser.add_argument(
         "image",

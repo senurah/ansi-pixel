@@ -52,6 +52,20 @@ uvx ansi-pixel logo.png
 uv add ansi-pixel
 ```
 
+### With Homebrew (macOS / Linux)
+```bash
+brew install senurah/tap/ansi-pixel
+```
+
+### Standalone Executable (Zero Dependencies)
+Download prebuilt binaries for Linux, macOS, or Windows directly from [GitHub Releases](https://github.com/senurah/ansi-pixel/releases):
+```bash
+# Example on Linux x86_64
+curl -L -o ansi-pixel https://github.com/senurah/ansi-pixel/releases/latest/download/ansi-pixel-linux-x86_64
+chmod +x ansi-pixel
+./ansi-pixel logo.png
+```
+
 ---
 
 ## Command-Line Usage
