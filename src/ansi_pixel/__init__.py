@@ -24,7 +24,7 @@ from ansi_pixel.exporters import (
 from ansi_pixel.optimizer import AnsiOptimizer, RGBColor, strip_ansi
 from ansi_pixel.render import render_image
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 __all__ = [
     "AnsiOptimizer",

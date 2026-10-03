@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ansi-pixel"
-version = "0.2.0"
+version = "0.2.1"
 description = "Convert images into true-color ANSI art for terminal banners, SSH previews, and Markdown."
 readme = "README.md"
 license = "MIT"

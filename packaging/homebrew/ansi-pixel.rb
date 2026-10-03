@@ -9,7 +9,7 @@
 class AnsiPixel < Formula
   desc "Convert images to truecolor ANSI pixel art directly in your terminal"
   homepage "https://github.com/senurah/ansi-pixel"
-  version "0.2.0"
+  version "0.2.1"
   license "MIT"
 
   on_macos do
