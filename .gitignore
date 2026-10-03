@@ -1,10 +1,31 @@
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+*$py.class
+
+# Virtual environments
 .venv/
 venv/
+ENV/
+env/
+
+# Environment variables
 .env
 
-#output files
+# PyInstaller / Build artifacts
+build/
+dist/
+*.spec
+*.egg-info/
+
+# Quality tool caches
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Output test files
 output.txt
 output.md
 output.py
+*.ans
+repomix-output.md
