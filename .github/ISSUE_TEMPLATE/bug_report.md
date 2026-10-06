@@ -1,8 +1,8 @@
 ---
 name: Issue
 about: Report a bug, suggest an improvement, or ask a question about ansi-pixel
-title: ""
-labels: ""
+title: "[Issue]: "
+labels: ["bug"]
 assignees: ""
 ---
 
