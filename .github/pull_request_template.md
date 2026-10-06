@@ -1,10 +1,20 @@
-## Summary
+## Description
 
 <!-- What does this pull request change, and why? -->
 
-## Changes
+Related issue:
+
+<!-- Link the issue, for example: Closes #123 or Related to #123 -->
 
 -
+
+## Type of change
+
+- [ ] Bug fix
+- [ ] Feature or improvement
+- [ ] Idea or experiment
+- [ ] Documentation
+- [ ] Maintenance or refactoring
 
 ## Testing
 
